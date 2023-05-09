@@ -1,16 +1,28 @@
 //this is actually 2_6 + 2.7 + 2.8 + 2.9 + 2.10
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Person from './components/Person'
 import PersonForm from './components/PersonForm'
 import Filter from './components/Filter'
+import axios from 'axios'
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { content: 'Arto Hellas',
-    number: '040-1234567',
-    id: 1 }
-  ]) 
+
+  useEffect(() => {
+    console.log("effect")
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        console.log('response', response.data)
+        setPersons(response.data)
+      })
+  }, [])
+
+  const [persons, setPersons] = useState([])
+  //   { name: 'Arto Hellas',
+  //   number: '040-1234567',
+  //   id: 1 }
+  // ]) 
 
   const [newPerson, setNewPerson] = useState('')
   const [newNumber, setNewNumber] = useState('')
@@ -21,7 +33,7 @@ const App = () => {
   const addPerson = (event) => {
     event.preventDefault()
     const nameObject = {
-      content: newPerson,
+      name: newPerson,
       number: newNumber,
       id: persons.length + 1
     }
@@ -30,12 +42,12 @@ const App = () => {
     console.log("nameObj", nameObject)
     
 
-    let validPers = persons.some(el => el.content === nameObject.content)
+    let validPers = persons.some(el => el.name === nameObject.name)
     if(!validPers){
       console.log("el", validPers)
       setPersons(persons.concat(nameObject))
     } else {
-      alert(`${nameObject.content} is already added to phonebook`)
+      alert(`${nameObject.name} is already added to phonebook`)
     }
     setNewPerson('')
     setNewNumber('')
@@ -54,7 +66,7 @@ const App = () => {
   const filterPerson = (event) => {
     const query = event.target.value
     var updatedList = [...persons]
-    updatedList = updatedList.filter(person => person.content.toLowerCase().indexOf(query.toLowerCase()) !== -1)
+    updatedList = updatedList.filter(person => person.name.toLowerCase().indexOf(query.toLowerCase()) !== -1)
     setShowAll(updatedList)
     setPersons(updatedList)
     console.log("ShowAll", showAll)
@@ -65,6 +77,8 @@ const App = () => {
     console.log('truee?', query=== '')
     console.log('initialList', initialList)
   }
+
+  //console.log(persons)
 
   return (
     <div>
@@ -81,8 +95,9 @@ const App = () => {
         handleNumberChange = {handleNumberChange}/>
 
       <h2>Numbers</h2>
+      {console.log('persNumbers',persons)}
       {persons.map(person => 
-        <Person key = {person.content} content = {person.content} number = {person.number} />)} 
+        <Person key = {person.id} name = {person.name} number = {person.number} />)} 
       
     </div>
   )

@@ -1,7 +1,8 @@
 const Person = (props) => {
+	console.log('props', props)
 	return (
 		<>
-			{props.content} {props.number} <br />
+			{props.name} {props.number} <br />
 		</>
 	)
 }
