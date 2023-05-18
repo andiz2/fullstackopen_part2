@@ -1,4 +1,7 @@
 const PersonForm = (props) => {
+	console.log('newPerson', props.newPerson)
+	console.log('props din newPerson', props)
+
 	return (
 		<div>
 			<form onSubmit = {props.addPerson}>

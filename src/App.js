@@ -1,4 +1,4 @@
-//this is actually 2_6 + 2.7 + 2.8 + 2.9 + 2.10
+//this is actually 2_12 + 2_13 + 2_14
 
 import { useState, useEffect } from 'react'
 import Person from './components/Person'
@@ -6,18 +6,11 @@ import PersonForm from './components/PersonForm'
 import Filter from './components/Filter'
 import axios from 'axios'
 
+import personService from './services/notes'
+
 const App = () => {
 
-  useEffect(() => {
-    console.log("effect")
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log('response', response.data)
-        setPersons(response.data)
-      })
-  }, [])
-
+ 
   const [persons, setPersons] = useState([])
   //   { name: 'Arto Hellas',
   //   number: '040-1234567',
@@ -29,6 +22,14 @@ const App = () => {
   const [showAll, setShowAll] = useState(persons)
 
   var initialList = JSON.parse(JSON.stringify(persons));
+
+ useEffect(() => {
+    personService
+      .getAll()
+      .then(initialPersons => {
+        setPersons(initialPersons)
+      })
+  }, [])
 
   const addPerson = (event) => {
     event.preventDefault()
@@ -45,12 +46,21 @@ const App = () => {
     let validPers = persons.some(el => el.name === nameObject.name)
     if(!validPers){
       console.log("el", validPers)
-      setPersons(persons.concat(nameObject))
+      personService
+      .create(nameObject)
+      .then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson))
+      })
     } else {
       alert(`${nameObject.name} is already added to phonebook`)
     }
     setNewPerson('')
     setNewNumber('')
+
+  }
+
+  const deletePerson = (id) => {
+
   }
 
 
