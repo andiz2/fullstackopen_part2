@@ -1,9 +1,10 @@
-//this is actually 2_12 + 2_13 + 2_14
+//2_16
 
 import { useState, useEffect } from 'react'
 import Person from './components/Person'
 import PersonForm from './components/PersonForm'
 import Filter from './components/Filter'
+import Notification from './components/Notification'
 
 import personService from './services/notes'
 
@@ -19,6 +20,7 @@ const App = () => {
   const [newPerson, setNewPerson] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [showAll, setShowAll] = useState(persons)
+  const [updateMessage, setUpdateMessage] = useState(null)
 
   var initialList = JSON.parse(JSON.stringify(persons));
 
@@ -46,6 +48,14 @@ const App = () => {
     if(!validPers){
       console.log("el", validPers)
       setPersons(persons.concat(nameObject))
+      setUpdateMessage(
+            `Added ${nameObject.name}`
+          )
+          setTimeout(() => {
+            console.log('intra in settimeout updatedmessage?', updateMessage)
+            console.log('nameobject din settimeout', nameObject.name)
+            setUpdateMessage(null)
+          }, 5000)
       personService
       .create(nameObject)
       .then(response => {
@@ -120,6 +130,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={updateMessage} />
       <Filter showAll = {showAll}
       filterPerson = {filterPerson}
       />      
@@ -137,6 +148,7 @@ const App = () => {
         <Person key = {person.id} id={person.id} 
         name = {person.name} number = {person.number}
         deleteContact = {() => deleteContact(person.id)}
+
          />)} 
         
         
